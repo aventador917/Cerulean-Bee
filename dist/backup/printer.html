@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+<!--    <link href="./css/global.css" rel="stylesheet">-->
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/layer.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/vue-resource.min.js"></script>
+    <script src="../js/config.js"></script>
+    <style>
+        .container {
+            width: 1000px;
+            margin: 0 auto;
+        }
+
+        .row{
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .row1 {
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+            border: 1px solid;
+            /*padding: 10px;*/
+        }
+
+        .left {
+            width: 50%;
+            border: 1px solid;
+        }
+
+        .right {
+            width: 50%;
+            border: 1px solid;
+        }
+
+        .row2 {
+            display: flex;
+            justify-content: space-around;
+            flex-direction: column;
+            border: 2px solid;
+            /*padding: 10px;*/
+        }
+
+        .row3{
+            border-top: 2px solid;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <center><h1>Print Order</h1></center>
+    <div class="row row1">
+        <div class="col-md-6 left">
+            <p>&nbsp;Customer: {{ data.order.customer }}</p>
+            <p>&nbsp;Phone: {{ data.order.phone }}</p>
+            <p>&nbsp;Email: {{ data.order.email }}</p>
+            <p>&nbsp;Setup charge: {{  }}</p>
+            <p>&nbsp;Deposit: {{  }}</p>
+            <p>&nbsp;Discount: {{  }}</p>
+            <p>&nbsp;Total Cost: {{ }}</p>
+        </div>
+        <div class="col-md-6 right">
+            <p>&nbsp;Order Date: {{ data.order.order_date }}</p>
+            <p>&nbsp;Art/Slide Date: {{  }}</p>
+            <p>&nbsp;Due Date: {{ data.order.due_date }}</p>
+            <p>&nbsp;Apparel Order Date: {{  }}</p>
+            <p>&nbsp;Art/Film Date: {{  }}</p>
+            <p>&nbsp;Print Date: {{  }}</p>
+            <p>&nbsp;Date Delivered: {{  }}</p>
+        </div>
+    </div>
+
+    <center><h1>Apparel/Item</h1></center>
+    <div class="row row2">
+        <div class="row">
+
+        </div>
+        <div class="row">
+            &nbsp;Base Color: {{ data.order.base_color }} &nbsp;&nbsp;&nbsp;&nbsp; Vendor:{{ data.order.vendor }}
+        </div>
+
+        <div class="row">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Size</th>
+                    <th>Number</th>
+                    <th>Add. Charge</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr class="active" v-for="item in data.items">
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.number }}</td>
+                        <td>{{ item.charge_price }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <p>&nbsp;Per unit base price: </p>
+            <p>&nbsp;Color Charge:</p>
+            <p>&nbsp;Total blank price:</p>
+        </div>
+
+        <div class="row row3">
+            <p>&nbsp;Art Print:</p>
+            <p>&nbsp;Location Size:</p>
+            <p>&nbsp;Colors Charge:</p>
+            <p>&nbsp;Colors List: &nbsp;<span style="text-decoration: underline "></span></p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            params: {
+                page: 1,
+                limit: 10
+            },
+            data: {},
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+            this.getOrdersData();
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                }
+                this.params.id = get_url_param("id");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = '../login.html'
+            },
+            getOrdersData: function () {
+                this.$http.get(BASE_URL + '/api/data.php?token=' + this.user.token, {"params": this.params}, {emulateJSON: true}).then(function (res) {
+                    if (res.body.code === 0) {
+                        this.data = res.body.data;
+                    }
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

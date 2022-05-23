@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="col-md-10" style="background-color: white;">
+            <form role="form">
+                <div class="row" style="margin-top: 50px">
+                    <h3>&nbsp;&nbsp;Logs</h3>
+                </div>
+                <div class="col-md-12" style="background-color: white;">
+                    <div class="row" :key="item"
+                         style="margin-top: 10px;margin-bottom: 10px;">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label for="title">Location</label>
+                                <input type="text" class="form-control" id="location" name="location[]"
+                                       :value="item.position" v-model="item.location"
+                                       placeholder="Please enter the location">
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="title">Description</label>
+                                <input type="text" class="form-control" id="description" name="description[]"
+                                       :value="item.description" v-model="item.description"
+                                       placeholder="Please enter the description">
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="title">Cost</label>
+                                <input type="text" class="form-control" id="cost" name="cost[]"
+                                       :value="item.cost" v-model="item.cost"
+                                       placeholder="Please enter the cost">
+                            </div>
+<!--                            <div class="col-lg-2">-->
+<!--                                <label for="title">Employee</label>-->
+<!--                                <input type="text" class="form-control" id="employee" name="employee[]"-->
+<!--                                       :value="item.employee" v-model="item.employee"-->
+<!--                                       placeholder="Please enter the employee">-->
+<!--                            </div>-->
+                            <div class="col-lg-2">
+                                <label for="title">Date Complete</label>
+                                <input type="date" class="form-control" id="date_complete" name="date_complete[]"
+                                       :value="item.date_complete" v-model="item.date_complete"
+                                       placeholder="Please enter the date complete">
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="title">Colors</label>
+                                <input type="text" class="form-control" id="colors" name="colors[]"
+                                       :value="item.colors" v-model="item.colors"
+                                       placeholder="Please enter the date colors">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" @click="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            params: {
+                page: 1,
+                limit: 10
+            },
+            data: {},
+            log: {},
+            isLogin: false,
+            item: {
+                location: '',
+                description: '',
+                cost: '',
+                employee: '',
+                date_complete: '',
+                colors: '',
+            },
+            token: ''
+        },
+        mounted() {
+            this.init();
+            // this.getOrders(1);
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    // this.logout();
+                }
+                this.id = get_url_param("id");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            submit: function () {
+                let data = this.item;
+                data.id = get_url_param("id");
+                data.employee = this.user.name;
+                this.$http.post(BASE_URL + '/api/art_log.php?token=' + this.user.token, data, {emulateJSON: true}).then(function (res) {
+                    console.log(res.body);
+                    layer.alert(res.body.msg)
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

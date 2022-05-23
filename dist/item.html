@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row main_container" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+<!--        <div class="col-md-2" style="">-->
+<!--            <ul class="nav nav-pills nav-stacked" style="max-width: 260px;">-->
+<!--                <li><a href="index.html">Submit Order</a></li>-->
+<!--                <li><a href="orders.html">All Orders</a></li>-->
+<!--                <li class="active"><a href="worklog.html">WorkLog</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+        <div class="col-md-12" style="background-color: white;">
+            <div class="table-responsive">
+                <table class="table">
+                    <caption>Items</caption>
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>project id</th>
+                        <th>size</th>
+                        <th>number</th>
+                        <th>vendor</th>
+                        <th>base price</th>
+                        <th>unit</th>
+                        <th>cost</th>
+                        <th>charge price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="log in logs">
+                        <th>{{ log.id }}</th>
+                        <th>{{ log.order_id }}</th>
+                        <th>{{ log.size }}</th>
+                        <th>{{ log.number }}</th>
+                        <th>{{ log.vendor }}</th>
+                        <th>{{ log.base_price }}</th>
+                        <th>{{ log.unit }}</th>
+                        <th>{{ log.cost }}</th>
+                        <th>{{ log.charge_price }}</th>
+                        <th>
+                            <a @click="complete(log.id,log.order_id)">Complete</a>
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <ul class="pager">
+                    <li :class="params.page === 1 ? 'previous disabled': 'previous'">
+                        <a href="javascript:void(0);" @click="getLogs(--params.page)">&larr; Older</a>
+                    </li>
+                    <li class="next">
+                        <a href="javascript:void(0);" @click="getLogs(++params.page)">Newer &rarr;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            params: {
+                order_id:get_url_param("id"),
+                page: 1,
+                limit: 10
+            },
+            logs: {},
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+            this.getLogs(1);
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.id = get_url_param("id");
+                this.amount = get_url_param("amount");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            getLogs: function () {
+                this.$http.get(BASE_URL + '/api/item.php?token=' + this.user.token, {"params": this.params}, {emulateJSON: true}).then(function (res) {
+                    if (res.body.code === 0) {
+                        this.logs = res.body.data;
+                    }
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            },
+            complete: function (id,order_id) {
+                layer.open({
+                    type: 2
+                    , title: 'Material'
+                    , id: 'LAY_showPraise'
+                    , shade: 0.8
+                    , shadeClose: true
+                    , area: ['60%', "70%"]
+                    , skin: 'layer-ext-case'
+                    , maxmin: true
+                    , content: './complete.html?id=' + id+'&order_id='+order_id
+                    , cancel: function (res) {
+                        console.log(res)
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

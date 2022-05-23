@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="col-md-2" style="">
+            <ul class="nav nav-pills nav-stacked" style="max-width: 260px;">
+                <li><a href="index.html">Submit Art Orders</a></li>
+                <li class="active"><a href="print_order.html">Submit Print Orders</a></li>
+                <li><a href="art_orders_list.html">Art Orders List</a></li>
+                <li><a href="print_orders_list.html">Print Orders List</a></li>
+                <li><a href="worklog.html">WorkLog</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10" style="background-color: white;">
+            <form role="form">
+                <div class="form-group">
+                    <label for="title">Customer</label>
+                    <input type="text" class="form-control" id="customer" name="customer" v-model="data.customer"
+                           placeholder="Please enter the customer name">
+                </div>
+                <div class="form-group">
+                    <label for="title">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" v-model="data.phone"
+                           placeholder="Please enter the phone">
+                </div>
+                <div class="form-group">
+                    <label for="title">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" v-model="data.email"
+                           placeholder="Please enter the email">
+                </div>
+                <div class="form-group">
+                    <label for="title">Setup charge</label>
+                    <input type="text" class="form-control" name="setup_charge" v-model="data.setup_charge"
+                           placeholder="Please enter the email">
+                </div>
+                <div class="form-group">
+                    <label for="title">Deposit</label>
+                    <input type="text" class="form-control" name="deposit" v-model="data.deposit"
+                           placeholder="Please enter the deposit">
+                </div>
+                <div class="form-group">
+                    <label for="title">Discount</label>
+                    <input type="text" class="form-control" id="discount" name="discount" v-model="data.discount"
+                           placeholder="Please enter the discount">
+                </div>
+                <div class="form-group">
+                    <label for="title">Total Cost</label>
+                    <input type="text" class="form-control" id="total_cost" name="total_cost"
+                           v-model="data.total_cost"
+                           placeholder="Please enter the total cost">
+                </div>
+                <div class="form-group">
+                    <label for="breed">Order Date</label>
+                    <input type="date" class="form-control" v-model="data.order_date"
+                           placeholder="Please enter the Order Date">
+                </div>
+                <div class="form-group">
+                    <label for="breed">Art/Slide Date</label>
+                    <input type="date" class="form-control" v-model="data.art_date"
+                           placeholder="Please enter the Art Slide Date">
+                </div>
+                <div class="form-group">
+                    <label for="breed">Due Date</label>
+                    <input type="date" class="form-control" v-model="data.due_date"
+                           placeholder="Please enter the Due Date">
+                </div>
+                <div class="form-group">
+                    <label for="oname">Apparel Order Date</label>
+                    <input type="date" class="form-control" v-model="data.apparel_order_date"
+                           placeholder="Please enter the art Date Approved">
+                </div>
+                <div class="form-group">
+                    <label for="area">Art/Film Date</label>
+                    <input type="date" class="form-control" v-model="data.art_film_date"
+                           placeholder="Please enter the Scheduled Print Date">
+                </div>
+                <div class="form-group">
+                    <label for="price">Print Date</label>
+                    <input type="date" class="form-control" v-model="data.print_date"
+                           placeholder="Please enter the base Print Date">
+                </div>
+                <div class="form-group">
+                    <label for="price">Date Delivered</label>
+                    <input type="date" class="form-control" v-model="data.date_delivered"
+                           placeholder="Please enter the Date Delivered">
+                </div>
+
+                <div class="row" style="margin-top: 50px">
+                    <h3>&nbsp;&nbsp;Size</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Base Color</label>
+                    <input type="text" class="form-control" v-model="data.base_color"
+                           placeholder="Please enter the base color">
+                </div>
+                <div class="form-group">
+                    <label for="price">Vendor</label>
+                    <input type="text" class="form-control" v-model="data.vendor"
+                           placeholder="Please enter the base vendor">
+                </div>
+                <div class="form-group">
+                    <label for="delivery">Per unit base Price</label>
+                    <input type="text" class="form-control" v-model="data.per_unit_base_price"
+                           placeholder="Please enter the maximum per unit base price">
+                </div>
+                <div class="form-group">
+                    <label for="price">Color Charge</label>
+                    <input type="text" class="form-control" v-model="data.color_charge"
+                           placeholder="Please enter the Color Charge">
+                </div>
+                <div class="form-group">
+                    <label for="price">Total blank price</label>
+                    <input type="text" class="form-control"
+                           v-model="data.total_blank_price = total_number"
+                           placeholder="Please enter the total blank price">
+                </div>
+
+                <div class="col-md-12" style="background-color: white;">
+                    <div class="row" v-for="(item,index) in size" :key="item"
+                         style="margin-top: 10px;margin-bottom: 10px;">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label for="title" v-if="index === 0">Size</label>
+                                <select class="form-control" name="size" v-model="item.size">
+                                    <option value="X-Small">X-Small</option>
+                                    <option value="Small">Small</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Large">Large</option>
+                                    <option value="X-Large">X-Large</option>
+                                    <option value="XX-Large">XX-Large</option>
+                                </select>
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="title" v-if="index === 0">Number</label>
+                                <input type="text" class="form-control" name="number"
+                                       :value="item.number" v-model="item.number"
+                                       placeholder="Please enter the Number">
+                            </div>
+                            <div class="col-lg-2">
+                                <label for="title" v-if="index === 0">Add Charge</label>
+                                <input type="text" class="form-control" name="cost"
+                                       :value="''+rules[item.number]"
+                                       v-model="item.add_charge = getRuleCharge(item.number) +  size_rules[item.size]"
+                                       placeholder="Please enter the add charge">
+                            </div>
+                            <div class="col-lg-2" :style="index===0 ? 'margin-top: 25px;':''">
+                                <button type="button" @click="addPos()" class="btn btn-default">Add</button>
+                                <button type="button" @click="removePos(index)" class="btn btn-default">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row" style="margin-top: 50px">
+                    <h3>&nbsp;&nbsp;Art print:</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Location Size</label>
+                    <input type="text" class="form-control" v-model="data.location_size"
+                           placeholder="Please enter the Location Size">
+                </div>
+                <div class="form-group">
+                    <label for="price">Colors Charge</label>
+                    <input type="text" class="form-control" v-model="data.colors_charge"
+                           placeholder="Please enter the colors charge">
+                </div>
+                <div class="form-group">
+                    <label for="price">Colors List</label>
+                    <input type="text" class="form-control" v-model="data.color_list"
+                           placeholder="Please enter the color list">
+                </div>
+                <div class="form-group">
+                    <label for="price">Total</label>
+                    <input type="text" class="form-control" v-model="data.total"
+                           placeholder="Please enter the Total price">
+                </div>
+
+                <button type="button" @click="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            data: {
+                // customer: "tomas",
+                // phone: 11151111,
+                // email: "123@gmail.com",
+                // setup_charge: 100,
+                // deposit: 11,
+                // discount: 0.82,
+                // total_cost: 100,
+                // order_date: "2022-05-05",
+                // art_date: "2022-05-05",
+                // due_date: "2022-05-06",
+                // apparel_order_date: " 2022-05-05",
+                // art_film_date: "2022-05-05",
+                // print_date: "2022-05-05",
+                // date_delivered: "2022-05-05",
+                // base_color: "red",
+                // vendor: "apple",
+                // per_unit_base_price: 10,
+                // color_charge: 10,
+                // total_blank_price: 100,
+                // location_size: "big",
+                // colors_charge: 10,
+                // color_list: "red,white",
+                // total: 100
+            },
+            order: {},
+            rules: {
+                "100": 5,
+                "500": 4,
+                "1000": 3
+            },
+            size_rules: {
+                "X-Small": 5,
+                "Small": 10,
+                "Medium": 15,
+                "Large": 20,
+                "X-Large": 25,
+                "XX-Large": 30
+            },
+            size: [
+                {
+                    size: 'X-Small',
+                    number: '',
+                    add_charge: '',
+                }
+            ],
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+        },
+        computed: {
+            total_number: function () {
+                let number = 0;
+                $.each(this.size, function (index, item) {
+                    number += parseInt(item.number);
+                });
+                console.log(number * (parseInt(this.data.per_unit_base_price) + parseInt(this.data.color_charge)))
+                return number * (parseInt(this.data.per_unit_base_price) + parseInt(this.data.color_charge));
+            }
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.id = get_url_param("id");
+                this.amount = get_url_param("amount");
+            },
+            getRuleCharge: function (number) {
+                if (number <= 100) {
+                    return this.rules["100"];
+                } else if (number > 100 && number <= 500) {
+                    return this.rules["500"];
+                } else if (number > 500 && number <= 1000) {
+                    return this.rules["1000"];
+                }
+            },
+            addPos: function () {
+                this.size.push({
+                    size: 'X-Small',
+                    number: '',
+                    add_charge: ''
+                })
+            },
+            removePos: function (index) {
+                console.log(index)
+                if (this.size.length === 1) {
+                    return false;
+                }
+                this.size.splice(index, 1);
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            submit: function () {
+                let data = this.data;
+                data.size = this.size;
+                this.$http.post(BASE_URL + '/api/print_order.php?token=' + this.user.token, data, {emulateJSON: true}).then(function (res) {
+                    console.log(res.body);
+                    layer.alert(res.body.msg)
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

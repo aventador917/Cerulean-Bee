@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row main_container" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="col-md-2" style="">
+            <ul class="nav nav-pills nav-stacked" style="max-width: 260px;">
+                <li><a href="index.html">Submit Order</a></li>
+                <li class="active"><a href="orders.html">All Orders</a></li>
+                <li><a href="worklog.html">WorkLog</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10" style="background-color: white;">
+            <div class="table-responsive">
+                <table class="table">
+                    <caption>Orders</caption>
+                    <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>customer</th>
+                        <th>phone</th>
+                        <th>email</th>
+                        <th>discount</th>
+                        <th>scheduled print date</th>
+                        <th>item</th>
+                        <th>base color</th>
+                        <th>vendor</th>
+                        <th>maximum colors</th>
+                        <th>event</th>
+                        <th>theme</th>
+                        <th>order date</th>
+                        <th>due date</th>
+                        <th>delivery date</th>
+                        <th>operation</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="order in orders">
+                        <th>{{ order.id }}</th>
+                        <th>{{ order.customer }}</th>
+                        <th>{{ order.phone }}</th>
+                        <th>{{ order.email }}</th>
+                        <th>{{ order.discount }}</th>
+                        <th>{{ order.scheduled_print_date }}</th>
+                        <th>{{ order.art_item }}</th>
+                        <th>{{ order.base_color }}</th>
+                        <th>{{ order.vendor }}</th>
+                        <th>{{ order.maximum_colors }}</th>
+                        <th>{{ order.event }}</th>
+                        <th>{{ order.theme }}</th>
+                        <th>{{ order.order_date }}</th>
+                        <th>{{ order.due_date}}</th>
+                        <th>{{ order.delivery_date }}</th>
+                        <th>
+                            <a @click="Material(order.id)">Material</a>
+                            <a :href="'./item.html?id='+order.id">Task</a>
+                            <a target="_blank" :href="'./printer.html?id='+order.id">Printer</a>
+                            <a target="_blank" :href="'./report.html?id='+order.id">CostReport</a>
+                        </th>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <ul class="pager">
+                    <li :class="params.page === 1 ? 'previous disabled': 'previous'">
+                        <a href="javascript:void(0);" @click="getOrders(--params.page)">&larr; Older</a>
+                    </li>
+                    <li class="next">
+                        <a href="javascript:void(0);" @click="getOrders(++params.page)">Newer &rarr;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            params: {
+                page: 1,
+                limit: 10
+            },
+            orders: {},
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+            this.getOrders(1);
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.id = get_url_param("id");
+                this.amount = get_url_param("amount");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            getOrders: function () {
+                this.$http.get(BASE_URL + '/api/order.php?token=' + this.user.token, {"params": this.params}, {emulateJSON: true}).then(function (res) {
+                    if (res.body.code === 0) {
+                        this.orders = res.body.data;
+                    }
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            },
+            Material: function (id) {
+                layer.open({
+                    type: 2
+                    , title: 'Material'
+                    , id: 'LAY_showPraise'
+                    , shade: 0.8
+                    , shadeClose: true
+                    , area: ['100%', "100%"]
+                    , skin: 'layer-ext-case'
+                    , maxmin: true
+                    , content: './printed.html?id=' + id
+                    , cancel: function (res) {
+                        console.log(res)
+                    }
+                })
+            },
+            Task: function (id) {
+                layer.open({
+                    type: 2
+                    , title: 'Task'
+                    , id: 'LAY_showPraise'
+                    , shade: 0.8
+                    , shadeClose: true
+                    , area: ['100%', "100%"]
+                    , skin: 'layer-ext-case'
+                    , maxmin: true
+                    , content: './task.html?id=' + id
+                    , cancel: function (res) {
+                        console.log(res)
+                    }
+                })
+            }
+        }
+    })
+</script>
+</body>
+</html>

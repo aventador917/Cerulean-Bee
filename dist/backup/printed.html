@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/global.css" rel="stylesheet">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/layer.js"></script>
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/vue-resource.min.js"></script>
+    <script src="../js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="../index.html"><img src="../images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="../index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="row">
+            <h3>&nbsp;&nbsp;Size & Number</h3>
+        </div>
+        <div class="col-md-12" style="background-color: white;">
+            <div class="row" v-for="(item,index) in data" :key="item" style="margin-top: 10px;">
+                <div class="col-lg-1">
+                    <label for="title" v-if="index === 0">Size</label>
+                    <input type="text" class="form-control" name="size[]" v-model="item.size" :value="item.size"
+                           placeholder="size">
+                </div>
+                <div class="col-lg-1">
+                    <label for="title" v-if="index === 0">Number</label>
+                    <input type="text" class="form-control" name="number[]" v-model="item.number" :value="item.number"
+                           placeholder="number">
+                </div>
+                <div class="col-lg-1">
+                    <label for="price" v-if="index === 0">Vendor</label>
+                    <input type="text" class="form-control" name="vendor[]" v-model="item.vendor" :value="item.vendor"
+                           placeholder="vendor">
+                </div>
+                <div class="col-lg-1">
+                    <label for="cover" v-if="index === 0">Base Price</label>
+                    <input type="number" class="form-control" name="base_price[]"
+                           placeholder="base price" v-model="item.base_price" :value="item.base_price">
+                </div>
+                <div class="col-lg-1">
+                    <label for="cover" v-if="index === 0">Charge Price</label>
+                    <input type="number" class="form-control" name="charge_price[]" v-model="item.charge_price"
+                           :value="item.charge_price"
+                           placeholder="charge price">
+                </div>
+                <div class="col-lg-1">
+                    <label for="cover" v-if="index === 0">Unit</label>
+                    <input type="number" class="form-control" name="unit[]" v-model="item.unit"
+                           :value="item.unit"
+                           placeholder="unit">
+                </div>
+                <div class="col-lg-1">
+                    <label for="cover" v-if="index === 0">Cost</label>
+                    <input type="number" class="form-control" name="cost[]" v-model="item.cost"
+                           :value="item.cost"
+                           placeholder="cost">
+                </div>
+                <div class="col-lg-2" :style="index===0 ? 'margin-top: 25px;':''">
+                    <button type="button" @click="add()" class="btn btn-default">Add</button>
+                    <button type="button" @click="remove(index)" class="btn btn-default">Remove</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 50px">
+            <h3>&nbsp;&nbsp;Position</h3>
+        </div>
+        <div class="col-md-12" style="background-color: white;">
+            <div class="row" v-for="(item,index) in position" :key="item" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <label for="title" v-if="index === 0">Position</label>
+                        <input type="text" class="form-control" id="position" name="position"
+                               :value="item.position" v-model="item.position"
+                               placeholder="Please enter the position">
+                    </div>
+                    <div class="col-lg-2">
+                        <label for="title" v-if="index === 0">Description</label>
+                        <input type="text" class="form-control" id="description" name="description"
+                               :value="item.description" v-model="item.description"
+                               placeholder="Please enter the description">
+                    </div>
+                    <div class="col-lg-2" :style="index===0 ? 'margin-top: 25px;':''">
+                        <button type="button" @click="addPos()" class="btn btn-default">Add</button>
+                        <button type="button" @click="removePos(index)" class="btn btn-default">Remove</button>
+                        <button type="button" @click="addColor(index)" class="btn btn-default">Add Colors</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row" v-for="(cos,pos) in item.colors" style="margin-top: 10px">
+                        <div class="col-lg-1" style="text-align: center">
+                            <span v-if="pos===0">&nbsp;</span>
+                            <br v-if="pos===0">
+                            | _ _ _ _ _
+                        </div>
+                        <div class="col-lg-2">
+                            <label for="title" v-if="pos === 0">Color</label>
+                            <input type="text" class="form-control" name="color[]"
+                                   :value="cos.color" v-model="cos.color"
+                                   placeholder="Please enter the position">
+                        </div>
+                        <div class="col-lg-2">
+                            <label for="title" v-if="pos === 0">Cost</label>
+                            <input type="text" class="form-control" name="cost[]"
+                                   :value="cos.cost" v-model="cos.cost"
+                                   placeholder="Please enter the description">
+                        </div>
+                        <div class="col-lg-2">
+                            <label for="title" v-if="pos === 0">Charge</label>
+                            <input type="text" class="form-control" name="charge[]"
+                                   :value="cos.charge" v-model="cos.charge"
+                                   placeholder="Please enter the description">
+                        </div>
+                        <div class="col-lg-2" :style="pos===0 ? 'margin-top: 25px;':''">
+                            <button type="button" @click="addColor(index)" class="btn btn-default">Add</button>
+                            <button type="button" @click="removeColor(index,pos)" class="btn btn-default">Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 30px;margin-left: 30px">
+            <br>
+            <button type="button" @click="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            id: '',
+            user: {},
+            data: [
+                {
+                    base_price: '',
+                    charge_price: '',
+                    size: '',
+                    number: '',
+                    vendor: '',
+                    unit: '',
+                    cost: '',
+                }
+            ],
+            position: [
+                {
+                    position: '',
+                    description: '',
+                    colors: []
+                }
+            ],
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.data.order_id = get_url_param("id");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = '../login.html'
+            },
+            add: function () {
+                this.data.push({
+                    base_price: '',
+                    charge_price: '',
+                    size: '',
+                    number: '',
+                    vendor: '',
+                    unit: '',
+                    cost: '',
+                })
+            },
+            remove: function (index) {
+                if(this.data.length === 1){
+                    return false;
+                }
+                this.data.splice(index, 1);
+            },
+            addPos: function () {
+                this.position.push({
+                    position: '',
+                    description: '',
+                    colors: []
+                })
+            },
+            removePos: function (index) {
+                console.log(index)
+                if(this.position.length === 1){
+                    return false;
+                }
+                this.position.splice(index, 1);
+            },
+            addColor: function (index) {
+                console.log(index);
+                this.position[index].colors.push({
+                    color: '',
+                    cost: '',
+                    charge: ''
+                })
+            },
+            removeColor: function (index, pos) {
+                console.log(index, pos)
+                this.position[index].colors.splice(pos, 1);
+            },
+            submit: function () {
+                let data = {
+                    order_id: this.data.order_id,
+                    item: this.data,
+                    position: this.position
+                };
+                this.$http.post(BASE_URL + '/api/item.php?token=' + this.user.token, data, {emulateJSON: true}).then(function (res) {
+                    console.log(res.body);
+                    layer.alert(res.body.msg)
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

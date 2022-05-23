@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="col-md-2" style="">
+            <ul class="nav nav-pills nav-stacked" style="max-width: 260px;">
+                <li  class="active"><a href="index.html">Submit Art Orders</a></li>
+                <li><a href="print_order.html">Submit Print Orders</a></li>
+                <li><a href="art_orders_list.html">Art Orders List</a></li>
+                <li><a href="print_orders_list.html">Print Orders List</a></li>
+                <li><a href="worklog.html">WorkLog</a></li>
+            </ul>
+        </div>
+        <div class="col-md-10" style="background-color: white;">
+            <form role="form">
+                <div class="form-group">
+                    <label for="title">Customer</label>
+                    <input type="text" class="form-control" id="customer" name="customer" v-model="data.customer"
+                           placeholder="Please enter the customer name">
+                </div>
+                <div class="form-group">
+                    <label for="title">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" v-model="data.phone"
+                           placeholder="Please enter the phone">
+                </div>
+                <div class="form-group">
+                    <label for="title">Discount</label>
+                    <input type="text" class="form-control" id="discount" name="discount" v-model="data.discount"
+                           placeholder="Please enter the discount">
+                </div>
+                <div class="form-group">
+                    <label for="title">Total Price</label>
+                    <input type="text" class="form-control" id="total_price" name="total_price"
+                           v-model="data.total_price"
+                           placeholder="Please enter the Total Price">
+                </div>
+                <div class="form-group">
+                    <label for="breed">Order Date</label>
+                    <input type="date" class="form-control" v-model="data.order_date"
+                           placeholder="Please enter the Order Date">
+                </div>
+                <div class="form-group">
+                    <label for="oname">Date Approved</label>
+                    <input type="date" class="form-control" v-model="data.date_approved"
+                           placeholder="Please enter the art Date Approved">
+                </div>
+                <div class="form-group">
+                    <label for="area">Scheduled Print Date</label>
+                    <input type="date" class="form-control" v-model="data.scheduled_print_Date"
+                           placeholder="Please enter the Scheduled Print Date">
+                </div>
+                <div class="form-group">
+                    <label for="price">Apparel/Item</label>
+                    <input type="text" class="form-control" v-model="data.apparel_item"
+                           placeholder="Please enter the base Apparel Item">
+                </div>
+                <div class="form-group">
+                    <label for="price">Base Color</label>
+                    <input type="text" class="form-control" v-model="data.base_color"
+                           placeholder="Please enter the base color">
+                </div>
+                <div class="form-group">
+                    <label for="delivery">Maximum Colors</label>
+                    <input type="text" class="form-control" v-model="data.maximum_colors"
+                           placeholder="Please enter the maximum colors">
+                </div>
+                <div class="form-group">
+                    <label for="price">Event</label>
+                    <input type="text" class="form-control" v-model="data.event"
+                           placeholder="Please enter the event">
+                </div>
+                <div class="form-group">
+                    <label for="price">Theme</label>
+                    <input type="text" class="form-control" v-model="data.theme"
+                           placeholder="Please enter the theme">
+                </div>
+
+<!--                <div class="row" style="margin-top: 50px">-->
+<!--                    <h3>&nbsp;&nbsp;Location</h3>-->
+<!--                </div>-->
+<!--                <div class="col-md-12" style="background-color: white;">-->
+<!--                    <div class="row" v-for="(item,index) in position" :key="item"-->
+<!--                         style="margin-top: 10px;margin-bottom: 10px;">-->
+<!--                        <div class="row">-->
+<!--                            <div class="col-lg-1">-->
+<!--                                <label for="title" v-if="index === 0">Location</label>-->
+<!--                                <input type="text" class="form-control" id="location" name="location[]"-->
+<!--                                       :value="item.position" v-model="item.location"-->
+<!--                                       placeholder="Please enter the location">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-2">-->
+<!--                                <label for="title" v-if="index === 0">Description</label>-->
+<!--                                <input type="text" class="form-control" id="description" name="description[]"-->
+<!--                                       :value="item.description" v-model="item.description"-->
+<!--                                       placeholder="Please enter the description">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-1">-->
+<!--                                <label for="title" v-if="index === 0">Cost</label>-->
+<!--                                <input type="text" class="form-control" id="cost" name="cost[]"-->
+<!--                                       :value="item.cost" v-model="item.cost"-->
+<!--                                       placeholder="Please enter the cost">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-1">-->
+<!--                                <label for="title" v-if="index === 0">Employee</label>-->
+<!--                                <input type="text" class="form-control" id="employee" name="employee[]"-->
+<!--                                       :value="item.employee" v-model="item.employee"-->
+<!--                                       placeholder="Please enter the employee">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-2">-->
+<!--                                <label for="title" v-if="index === 0">Date Complete</label>-->
+<!--                                <input type="date" class="form-control" id="date_complete" name="date_complete[]"-->
+<!--                                       :value="item.date_complete" v-model="item.date_complete"-->
+<!--                                       placeholder="Please enter the date complete">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-1">-->
+<!--                                <label for="title" v-if="index === 0">Colors</label>-->
+<!--                                <input type="text" class="form-control" id="colors" name="colors[]"-->
+<!--                                       :value="item.colors" v-model="item.colors"-->
+<!--                                       placeholder="Please enter the date colors">-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-2" :style="index===0 ? 'margin-top: 25px;':''">-->
+<!--                                <button type="button" @click="addPos()" class="btn btn-default">Add</button>-->
+<!--                                <button type="button" @click="removePos(index)" class="btn btn-default">Remove</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <button type="button" @click="submit" class="btn btn-default">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            data: {
+                // customer: "bill",
+                // phone: "131131587",
+                // discount: "0.85",
+                // total_price: "100",
+                // order_date: "2022-05-03",
+                // date_approved: "2022-05-04",
+                // scheduled_print_Date: "2022-05-06",
+                // base_color: "white",
+                // apparel_item: "t-shirt",
+                // maximum_colors: "white",
+                // event: "sport",
+                // theme: "health"
+            },
+            order: {},
+            position: [
+                {
+                    location: '',
+                    description: '',
+                    cost: '',
+                    employee: '',
+                    date_complete: '',
+                    colors: '',
+                }
+            ],
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.id = get_url_param("id");
+                this.amount = get_url_param("amount");
+            },
+            addPos: function () {
+                this.position.push({
+                    location: '',
+                    description: '',
+                    cost: '',
+                    employee: '',
+                    date_complete: '',
+                    colors: '',
+                })
+            },
+            removePos: function (index) {
+                console.log(index)
+                if (this.position.length === 1) {
+                    return false;
+                }
+                this.position.splice(index, 1);
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            submit: function () {
+                let data = this.data;
+                data.position = this.position;
+                this.$http.post(BASE_URL + '/api/art_order.php?token=' + this.user.token, data, {emulateJSON: true}).then(function (res) {
+                    console.log(res.body);
+                    layer.alert(res.body.msg)
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>

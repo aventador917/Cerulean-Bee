@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cerulean Bee</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/global.css" rel="stylesheet">
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+    <script src="./js/layer.js"></script>
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/vue-resource.min.js"></script>
+    <script src="./js/config.js"></script>
+    <style>
+        .carousel .item {
+            height: 450px;
+            background-color: #777;
+        }
+
+        .carousel-inner > .item > img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            height: 450px;
+        }
+
+        .table {
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="row nav-bottom">
+        <div class="col-md-6 logo-title">
+            <a href="./index.html"><img src="./images/logo.jpg?v=1" width="100" height="100"></a>
+            <a href="./index.html"><h1 class="LogoFont">Cerulean Bee</h1></a>
+        </div>
+    </div>
+
+
+    <div class="row" style="padding-top: 50px;padding-bottom:20px;background-color: white;">
+        <div class="col-md-12" style="background-color: white;">
+            <div class="form-group">
+                <label for="title">Start Time</label>
+                <input type="datetime-local" class="form-control" name="start_time" v-model="data.start_time"
+                       placeholder="Please enter the start time">
+            </div>
+            <div class="form-group">
+                <label for="title">End Time</label>
+                <input type="datetime-local" class="form-control" name="end_time" v-model="data.end_time"
+                       placeholder="Please enter the end time">
+            </div>
+            <div class="form-group">
+                <label for="title">Task</label>
+                <input type="text" class="form-control" name="task" v-model="data.task"
+                       placeholder="Please enter the task">
+            </div>
+            <button type="button" @click="submit" class="btn btn-default">Submit</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            user: {},
+            params: {
+                page: 1,
+                limit: 10
+            },
+            data:{},
+            log: {},
+            isLogin: false,
+            token: ''
+        },
+        mounted() {
+            this.init();
+            this.getOrders(1);
+        },
+        methods: {
+            init: function () {
+                let user = session("get.user");
+                if (user) {
+                    this.isLogin = true;
+                    this.user = JSON.parse(user);
+                    this.token = this.user.token;
+                } else {
+                    this.isLogin = false;
+                    this.logout();
+                }
+                this.id = get_url_param("id");
+                this.amount = get_url_param("amount");
+            },
+            logout: function () {
+                this.isLogin = false;
+                window.sessionStorage.clear();
+                window.location.href = './login.html'
+            },
+            submit: function () {
+                let data = this.data;
+                data.project_id = get_url_param("id");
+                data.art_project = get_url_param("art_project");
+                data.uid = this.user.id;
+                this.$http.post(BASE_URL + '/api/log.php?token=' + this.user.token, data, {emulateJSON: true}).then(function (res) {
+                    console.log(res.body);
+                    layer.alert(res.body.msg)
+                }, function (res) {
+                    console.log(res)
+                });
+                return true;
+            }
+        }
+    })
+</script>
+</body>
+</html>
